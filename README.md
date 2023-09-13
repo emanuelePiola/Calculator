@@ -1,2 +1,3 @@
 ﻿# Calculator by Emanuele Piola
 ### Progetto realizzato con la classe 4 B nel primo trimestre
+Lo scopo del progetto **Calculator** è produrre un clone...
