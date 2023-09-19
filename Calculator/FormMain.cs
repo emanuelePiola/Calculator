@@ -16,10 +16,12 @@ namespace Calculator
         {
             public char Content;
             public bool IsBold;
-            public btnStruct(char c, bool b)
+            public bool IsNumber;
+            public btnStruct(char c, bool b, bool n = false)
             {
                 this.Content = c;
                 this.IsBold = b;
+                this.IsNumber = n;
             }
         }
 
@@ -27,10 +29,10 @@ namespace Calculator
         {
             { new btnStruct('%',false), new btnStruct('Œ',false), new btnStruct('C',false), new btnStruct('⌫',false) },
             { new btnStruct('\u215F',false), new btnStruct('\u00B2',false), new btnStruct('\u221A',false), new btnStruct('÷',false) },
-            { new btnStruct('7',true), new btnStruct('8',true), new btnStruct('9',true), new btnStruct('×',false) },
-            { new btnStruct('4',true), new btnStruct('5',true), new btnStruct('6',true), new btnStruct('-',false) },
-            { new btnStruct('1',true), new btnStruct('2',true), new btnStruct('3',true), new btnStruct('+',false) },
-            { new btnStruct('±',true), new btnStruct('0',true), new btnStruct(',',true), new btnStruct('=',false) },
+            { new btnStruct('7',true,true), new btnStruct('8',true,true), new btnStruct('9',true,true), new btnStruct('×',false) },
+            { new btnStruct('4',true,true), new btnStruct('5',true,true), new btnStruct('6',true,true), new btnStruct('-',false) },
+            { new btnStruct('1',true,true), new btnStruct('2',true,true), new btnStruct('3',true,true), new btnStruct('+',false) },
+            { new btnStruct('±',true), new btnStruct('0',true,true), new btnStruct(',',true), new btnStruct('=',false) },
         };
 
         public FormMain()
@@ -62,11 +64,23 @@ namespace Calculator
                     myButton.Height = btnHeight;
                     myButton.Top = posY;
                     myButton.Left += posX;
-                    posX += myButton.Width;
+                    myButton.Tag = buttons[i, j];
+                    myButton.Click += MyButton_Click;
                     this.Controls.Add(myButton);
+                    posX += myButton.Width;
                 }
                 posX = 0;
                 posY += btnHeight;
+            }
+        }
+
+        private void MyButton_Click(object sender, EventArgs e)
+        {
+            Button clikedButton = (Button)sender;
+            btnStruct cbStruct = (btnStruct)clikedButton.Tag;
+            if (cbStruct.IsNumber)
+            {
+                lblResult.Text += clikedButton.Text;
             }
         }
     }
