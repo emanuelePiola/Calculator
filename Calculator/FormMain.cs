@@ -130,5 +130,22 @@ namespace Calculator
                     break;
             }
         }
+
+        private void lblResult_TextChanged(object sender, EventArgs e)
+        {
+            if (lblResult.Text.Length > 16)
+            {
+                lblResult.Text = lblResult.Text.Substring(0, 16);
+            }
+            if (lblResult.Text.Length>11)
+            {
+                float delta = lblResult.Text.Length - 11;
+                lblResult.Font = new Font("Segoe UI", 36-delta*(float)2.8, FontStyle.Regular);
+            }
+            else
+            {
+                lblResult.Font = new Font("Segoe UI", 36 , FontStyle.Regular);
+            }
+        }
     }
 }
