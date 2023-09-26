@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,6 +18,8 @@ namespace Calculator
         DecimalPoint,
         PlusMinusSign,
         Backspace,
+        ClearAll,
+        ClearEntry,
         Undefined
     }
 
@@ -37,7 +40,7 @@ namespace Calculator
 
         private btnStruct[,] buttons =
         {
-            { new btnStruct('%'), new btnStruct('Œ'), new btnStruct('C'), new btnStruct('⌫',symbolType.Backspace) },
+            { new btnStruct('%'), new btnStruct('Œ',symbolType.ClearEntry), new btnStruct('C',symbolType.ClearAll), new btnStruct('⌫',symbolType.Backspace) },
             { new btnStruct('\u215F'), new btnStruct('\u00B2'), new btnStruct('\u221A'), new btnStruct('÷',symbolType.Operator) },
             { new btnStruct('7',symbolType.Number,true), new btnStruct('8',symbolType.Number,true), new btnStruct('9',symbolType.Number,true), new btnStruct('×',symbolType.Operator) },
             { new btnStruct('4',symbolType.Number,true), new btnStruct('5',symbolType.Number,true), new btnStruct('6',symbolType.Number,true), new btnStruct('-',symbolType.Operator) },
@@ -126,6 +129,9 @@ namespace Calculator
                         lblResult.Text = "0";
                     }
                     break;
+                case symbolType.ClearAll:
+                    lblResult.Text = "0";
+                    break;
                 case symbolType.Undefined:
                     break;
             }
@@ -133,14 +139,27 @@ namespace Calculator
 
         private void lblResult_TextChanged(object sender, EventArgs e)
         {
+            if (lblResult.Text.Length>0)
+            {
+                decimal num = decimal.Parse(lblResult.Text);
+                NumberFormatInfo nfi = new CultureInfo("it-IT", false).NumberFormat;
+                int decimalSeparatorPosition = lblResult.Text.IndexOf(",");
+                nfi.NumberDecimalDigits = decimalSeparatorPosition == -1 ? 0 : lblResult.Text.Length - decimalSeparatorPosition - 1;
+                string stOut = num.ToString("N", nfi);
+                if(lblResult.Text.IndexOf(",") == lblResult.Text.Length-1)
+                {
+                    stOut += ",";
+                }
+                lblResult.Text = stOut;
+            }
             if (lblResult.Text.Length > 16)
             {
                 lblResult.Text = lblResult.Text.Substring(0, 16);
             }
             if (lblResult.Text.Length>11)
             {
-                float delta = lblResult.Text.Length - 11;
-                lblResult.Font = new Font("Segoe UI", 36-delta*(float)2.8, FontStyle.Regular);
+                float newSize = lblResult.Font.Size * (float)0.96;
+                lblResult.Font = new Font("Segoe UI", newSize, FontStyle.Regular);
             }
             else
             {
