@@ -152,19 +152,17 @@ namespace Calculator
                 }
                 lblResult.Text = stOut;
             }
-            if (lblResult.Text.Length > 16)
+            if (lblResult.Text.Length > 20)
             {
-                lblResult.Text = lblResult.Text.Substring(0, 16);
+                lblResult.Text = lblResult.Text.Substring(0, 20);
             }
-            if (lblResult.Text.Length>11)
+            int textWidth = TextRenderer.MeasureText(lblResult.Text, lblResult.Font).Width;
+            float newSize = lblResult.Font.Size * (((float)lblResult.Size.Width - 10) / textWidth);
+            if(newSize>36)
             {
-                float newSize = lblResult.Font.Size * (float)0.96;
-                lblResult.Font = new Font("Segoe UI", newSize, FontStyle.Regular);
+                newSize = 36;
             }
-            else
-            {
-                lblResult.Font = new Font("Segoe UI", 36 , FontStyle.Regular);
-            }
+            lblResult.Font = new Font("Segoe UI", newSize, FontStyle.Regular);
         }
     }
 }
