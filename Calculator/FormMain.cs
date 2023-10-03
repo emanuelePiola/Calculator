@@ -52,6 +52,10 @@ namespace Calculator
         const int lblResultWidthMargin = 25;
         const int lblResultMaxDigit = 25;
 
+        char lastOperator = ' ';
+        decimal operand1, operand2, result;
+        btnStruct lastButtonClicked;
+
         public FormMain()
         {
             InitializeComponent();
@@ -100,13 +104,14 @@ namespace Calculator
             switch (cbStruct.Type)
             {
                 case symbolType.Number:
-                    if (lblResult.Text == "0")
+                    if (lblResult.Text == "0" || lastButtonClicked.Type==symbolType.Operator)
                     {
                         lblResult.Text = "";
                     }
                     lblResult.Text += clikedButton.Text;
                     break;
                 case symbolType.Operator:
+                    manageOperator(cbStruct);
                     break;
                 case symbolType.DecimalPoint:
                     if (lblResult.Text.IndexOf(",") == -1)
@@ -139,6 +144,40 @@ namespace Calculator
                     break;
                 case symbolType.Undefined:
                     break;
+            }
+            lastButtonClicked = cbStruct;
+        }
+
+        private void manageOperator(btnStruct cbStruct)
+        {
+            if (lastOperator==' ')
+            {
+                operand1=decimal.Parse(lblResult.Text);
+                lastOperator = cbStruct.Content;
+            }
+            else
+            {
+                operand2= decimal.Parse(lblResult.Text);
+                switch (lastOperator)
+                {
+                    case '+':
+                        result = operand1 + operand2;
+                        break;
+                    case '-':
+                        result = operand1 - operand2;
+                        break;
+                    case '×':
+                        result = operand1 * operand2;
+                        break;
+                    case '÷':
+                        result = operand1 / operand2;
+                        break;
+                    default:
+                        break;
+                }
+                lblResult.Text = result.ToString();
+                lastOperator = cbStruct.Content;
+                operand1 =result;
             }
         }
 
