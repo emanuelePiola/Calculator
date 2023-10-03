@@ -111,9 +111,9 @@ namespace Calculator
                     lblResult.Text += clikedButton.Text;
                     break;
                 case symbolType.Operator:
-                    if(lastButtonClicked.Type==symbolType.Operator && lastButtonClicked.Content!='=')
+                    if(lastButtonClicked.Type==symbolType.Operator && cbStruct.Content!='=')
                     {
-                        lastOperator = lastButtonClicked.Content;
+                        lastOperator = cbStruct.Content;
                     }
                     else
                     {
