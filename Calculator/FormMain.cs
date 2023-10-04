@@ -15,6 +15,7 @@ namespace Calculator
     {
         Number,
         Operator,
+        SpecialOperator,
         DecimalPoint,
         PlusMinusSign,
         Backspace,
@@ -41,7 +42,7 @@ namespace Calculator
         private btnStruct[,] buttons =
         {
             { new btnStruct('%'), new btnStruct('Œ',symbolType.ClearEntry), new btnStruct('C',symbolType.ClearAll), new btnStruct('⌫',symbolType.Backspace) },
-            { new btnStruct('\u215F'), new btnStruct('\u00B2'), new btnStruct('\u221A'), new btnStruct('÷',symbolType.Operator) },
+            { new btnStruct('\u215F',symbolType.SpecialOperator), new btnStruct('\u00B2'), new btnStruct('\u221A'), new btnStruct('÷',symbolType.Operator) },
             { new btnStruct('7',symbolType.Number,true), new btnStruct('8',symbolType.Number,true), new btnStruct('9',symbolType.Number,true), new btnStruct('×',symbolType.Operator) },
             { new btnStruct('4',symbolType.Number,true), new btnStruct('5',symbolType.Number,true), new btnStruct('6',symbolType.Number,true), new btnStruct('-',symbolType.Operator) },
             { new btnStruct('1',symbolType.Number,true), new btnStruct('2',symbolType.Number,true), new btnStruct('3',symbolType.Number,true), new btnStruct('+',symbolType.Operator) },
@@ -120,6 +121,9 @@ namespace Calculator
                         manageOperator(cbStruct);
                     }
                     break;
+                case symbolType.SpecialOperator:
+                    manageSpecialOperator(cbStruct);
+                    break;
                 case symbolType.DecimalPoint:
                     if (lblResult.Text.IndexOf(",") == -1)
                     {
@@ -150,11 +154,17 @@ namespace Calculator
                     }
                     break;
                 case symbolType.ClearAll:
-                    operand1 = 0;
-                    operand2 = 0;
-                    result = 0;
-                    lastOperator = ' ';
-                    lblResult.Text = "0";
+                    clearAll();
+                    break;
+                case symbolType.ClearEntry:
+                    if(lastButtonClicked.Content=='=')
+                    {
+                        clearAll();
+                    }
+                    else
+                    {
+                        lblResult.Text = "0";
+                    }
                     break;
                 case symbolType.Undefined:
                     break;
@@ -165,11 +175,34 @@ namespace Calculator
             }
         }
 
+        private void clearAll()
+        {
+            operand1 = 0;
+            operand2 = 0;
+            result = 0;
+            lastOperator = ' ';
+            lblResult.Text = "0";
+        }
+
+        private void manageSpecialOperator(btnStruct cbStruct)
+        {
+            operand2 = decimal.Parse(lblResult.Text);
+            switch (cbStruct.Content)
+            {
+                case '\u215F': //1/x
+                    result = 1 / operand2;
+                    break;
+                default:
+                    break;
+            }
+            lblResult.Text = result.ToString();
+        }
+
         private void manageOperator(btnStruct cbStruct)
         {
-            if (lastOperator==' ')
+            if (lastOperator == ' ')
             {
-                operand1=decimal.Parse(lblResult.Text);
+                operand1 = decimal.Parse(lblResult.Text);
                 if (cbStruct.Content != '=')
                 {
                     lastOperator = cbStruct.Content;
@@ -177,7 +210,7 @@ namespace Calculator
             }
             else
             {
-                if(lastButtonClicked.Content!='=')
+                if (lastButtonClicked.Content != '=')
                 {
                     operand2 = decimal.Parse(lblResult.Text);
                 }
@@ -202,12 +235,12 @@ namespace Calculator
                 if (cbStruct.Content != '=')
                 {
                     lastOperator = cbStruct.Content;
-                    if (lastButtonClicked.Content=='=')
+                    if (lastButtonClicked.Content == '=')
                     {
                         operand2 = 0;
                     }
                 }
-                operand1 =result;
+                operand1 = result;
             }
         }
 
