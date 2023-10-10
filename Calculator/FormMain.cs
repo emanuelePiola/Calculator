@@ -41,8 +41,8 @@ namespace Calculator
 
         private btnStruct[,] buttons =
         {
-            { new btnStruct('%'), new btnStruct('Œ',symbolType.ClearEntry), new btnStruct('C',symbolType.ClearAll), new btnStruct('⌫',symbolType.Backspace) },
-            { new btnStruct('\u215F',symbolType.SpecialOperator), new btnStruct('\u00B2'), new btnStruct('\u221A'), new btnStruct('÷',symbolType.Operator) },
+            { new btnStruct('%',symbolType.SpecialOperator), new btnStruct('Œ',symbolType.ClearEntry), new btnStruct('C',symbolType.ClearAll), new btnStruct('⌫',symbolType.Backspace) },
+            { new btnStruct('\u215F',symbolType.SpecialOperator), new btnStruct('\u00B2',symbolType.SpecialOperator), new btnStruct('\u221A',symbolType.SpecialOperator), new btnStruct('÷',symbolType.Operator) },
             { new btnStruct('7',symbolType.Number,true), new btnStruct('8',symbolType.Number,true), new btnStruct('9',symbolType.Number,true), new btnStruct('×',symbolType.Operator) },
             { new btnStruct('4',symbolType.Number,true), new btnStruct('5',symbolType.Number,true), new btnStruct('6',symbolType.Number,true), new btnStruct('-',symbolType.Operator) },
             { new btnStruct('1',symbolType.Number,true), new btnStruct('2',symbolType.Number,true), new btnStruct('3',symbolType.Number,true), new btnStruct('+',symbolType.Operator) },
@@ -142,9 +142,13 @@ namespace Calculator
                             lblResult.Text = lblResult.Text.Substring(1);
                         }
                     }
+                    if(lastButtonClicked.Type == symbolType.Operator)
+                    {
+                        operand1 = -operand1;
+                    }
                     break;
                 case symbolType.Backspace:
-                    if (lastButtonClicked.Type!=symbolType.Operator)
+                    if (lastButtonClicked.Type!=symbolType.Operator && lastButtonClicked.Type != symbolType.SpecialOperator)
                     {
                         lblResult.Text = lblResult.Text.Substring(0, lblResult.Text.Length - 1);
                         if (lblResult.Text == "" || lblResult.Text == "-0")
@@ -169,7 +173,7 @@ namespace Calculator
                 case symbolType.Undefined:
                     break;
             }
-            if(cbStruct.Type!=symbolType.Backspace)
+            if(cbStruct.Type!=symbolType.Backspace && cbStruct.Type != symbolType.PlusMinusSign)
             {
                 lastButtonClicked = cbStruct;
             }
@@ -191,6 +195,15 @@ namespace Calculator
             {
                 case '\u215F': //1/x
                     result = 1 / operand2;
+                    break;
+                case '\u00B2': //x^2
+                    result = operand2*operand2;
+                    break;
+                case '\u221A': //sqr(x)
+                    result = (decimal)Math.Sqrt((double)operand2);
+                    break;
+                case '%':
+                    result = operand1*operand2/100;
                     break;
                 default:
                     break;
