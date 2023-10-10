@@ -110,6 +110,7 @@ namespace Calculator
                         lblResult.Text = "";
                     }
                     lblResult.Text += clikedButton.Text;
+                    lblCronologia.Text += " " + clikedButton.Text + "  ";
                     break;
                 case symbolType.Operator:
                     if(lastButtonClicked.Type==symbolType.Operator && cbStruct.Content!='=')
@@ -120,6 +121,15 @@ namespace Calculator
                     {
                         manageOperator(cbStruct);
                     }
+
+                    if(lblCronologia.Text.Substring(lblCronologia.Text.Length-1)!="=" || lblCronologia.Text.Substring(lblCronologia.Text.Length - 1) != clikedButton.Text)
+                    {
+                        lblCronologia.Text = lblCronologia.Text.Substring(0, lblCronologia.Text.Length - 1) + clikedButton.Text;
+                    }
+                    //else if(lblCronologia.Text.Substring(lblCronologia.Text.Length - 1) == "=")
+                    //{
+                    //    lblCronologia.Text = operand1 + lblCronologia.Text.Substring(2, lblCronologia.Text.Length - 1);
+                    //}
                     break;
                 case symbolType.SpecialOperator:
                     manageSpecialOperator(cbStruct);
@@ -186,6 +196,7 @@ namespace Calculator
             result = 0;
             lastOperator = ' ';
             lblResult.Text = "0";
+            lblCronologia.Text = "";
         }
 
         private void manageSpecialOperator(btnStruct cbStruct)
