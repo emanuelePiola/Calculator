@@ -57,6 +57,8 @@ namespace Calculator
         decimal operand1, operand2, result;
         btnStruct lastButtonClicked;
 
+        string lastOperatorInHistory = " ";
+
         public FormMain()
         {
             InitializeComponent();
@@ -110,7 +112,6 @@ namespace Calculator
                         lblResult.Text = "";
                     }
                     lblResult.Text += clikedButton.Text;
-                    lblCronologia.Text += " " + clikedButton.Text + "  ";
                     break;
                 case symbolType.Operator:
                     if(lastButtonClicked.Type==symbolType.Operator && cbStruct.Content!='=')
@@ -121,15 +122,6 @@ namespace Calculator
                     {
                         manageOperator(cbStruct);
                     }
-
-                    if(lblCronologia.Text.Substring(lblCronologia.Text.Length-1)!="=" || lblCronologia.Text.Substring(lblCronologia.Text.Length - 1) != clikedButton.Text)
-                    {
-                        lblCronologia.Text = lblCronologia.Text.Substring(0, lblCronologia.Text.Length - 1) + clikedButton.Text;
-                    }
-                    //else if(lblCronologia.Text.Substring(lblCronologia.Text.Length - 1) == "=")
-                    //{
-                    //    lblCronologia.Text = operand1 + lblCronologia.Text.Substring(2, lblCronologia.Text.Length - 1);
-                    //}
                     break;
                 case symbolType.SpecialOperator:
                     manageSpecialOperator(cbStruct);
@@ -187,6 +179,45 @@ namespace Calculator
             {
                 lastButtonClicked = cbStruct;
             }
+            if (cbStruct.Type == symbolType.Operator && clikedButton.Text != "=")
+            {
+                if(lblCronologia.Text.Contains(lastOperatorInHistory))
+                {
+                    lblCronologia.Text += " " + operand2;
+                }
+                else
+                {
+                    if (lastOperatorInHistory!=" " && !lastOperatorInHistory.Contains("="))
+                    {
+                        lblCronologia.Text = lblCronologia.Text.Substring(0, lblCronologia.Text.Length - 1) + clikedButton.Text;
+                    }
+                    else if(!lastOperatorInHistory.Contains("="))
+                    {
+                        lblCronologia.Text = operand1 + " " + clikedButton.Text;
+                        lastOperatorInHistory = clikedButton.Text;
+                    }
+                }
+            }
+            else if(clikedButton.Text=="=")
+            {
+                if(!lastOperatorInHistory.Contains("="))
+                {
+                    lblCronologia.Text += " =";
+                    lastOperatorInHistory += "=";
+                }
+                else
+                {
+                    lblCronologia.Text = operand1 + " ";
+                    bool isToSubstring = false;
+                    for (int i = 0; i < lblCronologia.Text.Length; i++)
+                    {
+                        if (lastOperatorInHistory.Contains(lblCronologia.Text[i]) || isToSubstring) 
+                        {
+                            lblCronologia.Text+=lblCronologia.Text[i];
+                        }
+                    }
+                }
+            }
         }
 
         private void clearAll()
@@ -197,6 +228,7 @@ namespace Calculator
             lastOperator = ' ';
             lblResult.Text = "0";
             lblCronologia.Text = "";
+            lastOperatorInHistory = " ";
         }
 
         private void manageSpecialOperator(btnStruct cbStruct)
@@ -256,6 +288,7 @@ namespace Calculator
                         break;
                 }
                 lblResult.Text = result.ToString();
+                lblCronologia.Text += " " + operand1 + " " + lastOperator + " " ;
                 if (cbStruct.Content != '=')
                 {
                     lastOperator = cbStruct.Content;
