@@ -54,10 +54,12 @@ namespace Calculator
         const int lblResultMaxDigit = 25;
 
         char lastOperator = ' ';
-        decimal operand1, operand2, result;
+        decimal operand1, operand2, result, lastResult;
         btnStruct lastButtonClicked;
 
         string lastOperatorInHistory = " ";
+        string specialOp = "";
+        string lastContained="";
 
         public FormMain()
         {
@@ -103,6 +105,8 @@ namespace Calculator
         {
             Button clikedButton = (Button)sender;
             btnStruct cbStruct = (btnStruct)clikedButton.Tag;
+
+            lastContained = lblResult.Text;
 
             switch (cbStruct.Type)
             {
@@ -179,15 +183,21 @@ namespace Calculator
             {
                 lastButtonClicked = cbStruct;
             }
+
             if (cbStruct.Type == symbolType.Operator && clikedButton.Text != "=")
             {
-                if(lblCronologia.Text.Contains(lastOperatorInHistory))
+                if(lblCronologia.Text.Contains(lastOperatorInHistory) && cbStruct.Type != symbolType.Operator)
                 {
                     lblCronologia.Text += " " + operand2;
                 }
                 else
                 {
-                    if (lastOperatorInHistory!=" " && !lastOperatorInHistory.Contains("="))
+                    if (lastOperatorInHistory.Contains("=") || (cbStruct.Type == symbolType.Operator && clikedButton.Text != lastOperatorInHistory && lblCronologia.Text.Contains(lastOperatorInHistory)))
+                    {
+                        lblCronologia.Text = operand1 + " " + clikedButton.Text;
+                        lastOperatorInHistory = clikedButton.Text;
+                    }
+                    else if (lastOperatorInHistory!=" " && !lastOperatorInHistory.Contains("="))
                     {
                         lblCronologia.Text = lblCronologia.Text.Substring(0, lblCronologia.Text.Length - 1) + clikedButton.Text;
                     }
@@ -198,26 +208,56 @@ namespace Calculator
                     }
                 }
             }
-            else if(clikedButton.Text=="=")
+            else if (cbStruct.Type == symbolType.SpecialOperator && clikedButton.Text != "%")
             {
-                if(!lastOperatorInHistory.Contains("="))
+                if(lblCronologia.Text=="")
                 {
-                    lblCronologia.Text += " =";
-                    lastOperatorInHistory += "=";
+                    lblCronologia.Text = specialOp + "( " + lastContained + " )";
                 }
                 else
                 {
-                    lblCronologia.Text = operand1 + " ";
+                    string output = "";
+                    for (int i = 0; i < lblCronologia.Text.Length; i++)
+                    {
+                        output += lblCronologia.Text[i];
+                        if (lastOperatorInHistory.Contains(lblCronologia.Text[i])) //problem on minus
+                        {
+                            break;
+                        }
+                    }
+                    output += " " + specialOp + "( " + lastContained + " )";
+                    lblCronologia.Text = output;
+                }
+            }
+            else if(clikedButton.Text=="=")
+            {
+                if(!lastOperatorInHistory.Contains("=") && lblCronologia.Text != "")
+                {
+                    lblCronologia.Text += " " + operand2 + " =";
+                    lastOperatorInHistory += "=";
+                }
+                else if(lblCronologia.Text=="")
+                {
+                    lblCronologia.Text=operand1 + " " + clikedButton.Text;
+                }
+                else 
+                {
+                    string output = lastResult + " ";
                     bool isToSubstring = false;
                     for (int i = 0; i < lblCronologia.Text.Length; i++)
                     {
-                        if (lastOperatorInHistory.Contains(lblCronologia.Text[i]) || isToSubstring) 
+                        if (lastOperatorInHistory.Contains(lblCronologia.Text[i]) || isToSubstring) //problem on minus
                         {
-                            lblCronologia.Text+=lblCronologia.Text[i];
+                            output+=lblCronologia.Text[i];
+                            isToSubstring = true;
                         }
                     }
+
+                    lblCronologia.Text=output;
                 }
             }
+
+            lastResult = operand1;
         }
 
         private void clearAll()
@@ -238,12 +278,15 @@ namespace Calculator
             {
                 case '\u215F': //1/x
                     result = 1 / operand2;
+                    specialOp = "1/";
                     break;
                 case '\u00B2': //x^2
                     result = operand2*operand2;
+                    specialOp = "sqr";
                     break;
                 case '\u221A': //sqr(x)
                     result = (decimal)Math.Sqrt((double)operand2);
+                    specialOp = "\u221A";
                     break;
                 case '%':
                     result = operand1*operand2/100;
@@ -288,7 +331,6 @@ namespace Calculator
                         break;
                 }
                 lblResult.Text = result.ToString();
-                lblCronologia.Text += " " + operand1 + " " + lastOperator + " " ;
                 if (cbStruct.Content != '=')
                 {
                     lastOperator = cbStruct.Content;
