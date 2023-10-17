@@ -184,6 +184,7 @@ namespace Calculator
                 lastButtonClicked = cbStruct;
             }
 
+            //cronologia
             if (cbStruct.Type == symbolType.Operator && clikedButton.Text != "=")
             {
                 if(lblCronologia.Text.Contains(lastOperatorInHistory) && cbStruct.Type != symbolType.Operator)
@@ -229,6 +230,10 @@ namespace Calculator
                     lblCronologia.Text = output;
                 }
             }
+            else if(clikedButton.Text=="%")
+            {
+                lblCronologia.Text += " " + lblResult.Text;
+            }
             else if(clikedButton.Text=="=")
             {
                 if(!lastOperatorInHistory.Contains("=") && lblCronologia.Text != "")
@@ -255,6 +260,10 @@ namespace Calculator
 
                     lblCronologia.Text=output;
                 }
+            }
+            else if(cbStruct.Type == symbolType.Backspace && lastOperatorInHistory.Contains("="))
+            {
+                lblCronologia.Text = "";
             }
 
             lastResult = operand1;
