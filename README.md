@@ -39,8 +39,8 @@ To realise this project we will use C# coding program on Visual Studio 2022 (or 
 1. Duca Stefano
 1. Fissore Simone
 1. Galleano Cristian
-1. Lacertosa Edoardo
 1. La Fontana Francesco
+1. Lacertosa Edoardo
 1. Lo Iacono Edoardo
 1. Pepe Davide
 1. Piola Emanuele
